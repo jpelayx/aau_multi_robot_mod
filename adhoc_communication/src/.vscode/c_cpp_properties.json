@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/julia/catkin_ws/devel_isolated/rosaria_phi/include/**",
+                "/home/julia/catkin_ws/install_isolated/include/**",
+                "/home/julia/catkin_ws/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/home/julia/catkin_ws/src/aau_multi_robot/explorer/include/**",
+                "/home/julia/catkin_ws/src/map_merging/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14"
+        }
+    ],
+    "version": 4
+}

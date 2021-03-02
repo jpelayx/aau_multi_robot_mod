@@ -1,0 +1,31 @@
+<launch>
+<node name="slam_gmapping_0" pkg="gmapping" type="slam_gmapping" output="screen" ns="robot_0" respawn="true">
+<rosparam>
+odom_frame: /robot_0/odom
+base_frame: /robot_0/base_link
+</rosparam>
+	<remap from="scan" to="/robot_0/base_scan"/>
+	<remap from="map" to="/robot_0/map"/>
+	<remap from="map_metadata" to="/robot_0/map_metadata"/>
+</node>
+
+<node name="slam_gmapping_1" pkg="gmapping" type="slam_gmapping" output="screen" ns="robot_1" respawn="true">
+<rosparam>
+odom_frame: /robot_1/odom
+base_frame: /robot_1/base_link
+</rosparam>
+	<remap from="scan" to="/robot_1/base_scan"/>
+	<remap from="map" to="/robot_1/map"/>
+	<remap from="map_metadata" to="/robot_1/map_metadata"/>
+</node>
+
+<node name="slam_gmapping_2" pkg="gmapping" type="slam_gmapping" output="screen" ns="robot_2" respawn="true">
+<rosparam>
+odom_frame: /robot_2/odom
+base_frame: /robot_2/base_link
+</rosparam>
+	<remap from="scan" to="/robot_2/base_scan"/>
+	<remap from="map" to="/robot_2/map"/>
+	<remap from="map_metadata" to="/robot_2/map_metadata"/>
+</node>
+</launch>
