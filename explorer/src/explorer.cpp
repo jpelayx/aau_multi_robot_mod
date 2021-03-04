@@ -13,7 +13,8 @@
 #include <costmap_2d/costmap_2d_publisher.h>
 #include <costmap_2d/observation.h>
 #include <costmap_2d/observation_buffer.h>
-#include <tf/transform_listener.h>
+//#include <tf/transform_listener.h>
+#include <tf2_ros/transform_listener.h>
 #include <std_msgs/String.h>
 //#include <costmap_2d/voxel_costmap_2d.h>
 #include <actionlib/client/simple_action_client.h>
@@ -46,7 +47,7 @@ class Explorer {
 
 public:
 
-	Explorer(tf::TransformListener& tf) :
+	Explorer(tf2_ros::Buffer& tf) :
         counter(0), rotation_counter(0), nh("~"), exploration_finished(false), number_of_robots(1), accessing_cluster(0), cluster_element_size(0),
         cluster_flag(false), cluster_element(-1), cluster_initialize_flag(false), global_iterattions(0), global_iterations_counter(0), 
         counter_waiting_for_clusters(0), global_costmap_iteration(0), robot_prefix_empty(false), robot_id(0){
@@ -204,8 +205,7 @@ public:
 		if (!costmap2d_local->getRobotPose(robotPose)) {
 			ROS_ERROR("Failed to get RobotPose");
 		}
-		visualize_goal_point(robotPose.getOrigin().getX(),
-				robotPose.getOrigin().getY());
+		visualize_goal_point(robotPose.pose.position.x, robotPose.pose.position.y);
 
 		// transmit three times, since rviz need at least 1 to buffer before visualizing the point
 		for (int i = 0; i <= 2; i++) {
@@ -221,12 +221,12 @@ public:
 		 * within the vector. Therefore set it to the home position.
 		 */
                                
-                robot_home_position_x = robotPose.getOrigin().getX();
-                robot_home_position_y = robotPose.getOrigin().getY();
+                robot_home_position_x = robotPose.pose.position.x;
+                robot_home_position_y = robotPose.pose.position.y;
 		ROS_INFO("Set home point to (%lf,%lf).",robot_home_position_x,robot_home_position_y);
                
-                exploration->next_auction_position_x = robotPose.getOrigin().getX();
-                exploration->next_auction_position_y = robotPose.getOrigin().getY();
+                exploration->next_auction_position_x = robotPose.pose.position.x;
+                exploration->next_auction_position_y = robotPose.pose.position.y;
                 
                 exploration->storeVisitedFrontier(robot_home_position_x,robot_home_position_y, robot_id, robot_name, -1);		             
                 exploration->storeFrontier(robot_home_position_x,robot_home_position_y, robot_id, robot_name, -1);           
@@ -1399,8 +1399,8 @@ public:
 		goalPoint.header.seq = goal_point_message++;
 		goalPoint.header.stamp = ros::Time::now();
                 goalPoint.header.frame_id = move_base_frame; //"map"
-		goalPoint.point.x = x;// - robotPose.getOrigin().getX();
-		goalPoint.point.y = y;// - robotPose.getOrigin().getY();
+		goalPoint.point.x = x;// - robotPose.pose.position.x;
+		goalPoint.point.y = y;// - robotPose.pose.position.y;
 
 		ros::NodeHandle nh_Point("goalPoint");
 		pub_Point = nh_Point.advertise < geometry_msgs::PointStamped
@@ -1413,8 +1413,8 @@ public:
 		homePoint.header.seq = home_point_message++;
 		homePoint.header.stamp = ros::Time::now();
                 homePoint.header.frame_id = move_base_frame; //"map";
-		home_point_x = robotPose.getOrigin().getX();
-		home_point_y = robotPose.getOrigin().getY();
+		home_point_x = robotPose.pose.position.x;
+		home_point_y = robotPose.pose.position.y;
 		homePoint.point.x = home_point_x;
 		homePoint.point.y = home_point_y;
 
@@ -1450,8 +1450,8 @@ public:
 		goal_msgs.target_pose.header.seq = seq;	// increase the sequence number
 //		goal_msgs.target_pose.header.stamp = ros::Time::now();
                 goal_msgs.target_pose.header.frame_id = move_base_frame; //"map";
-		goal_msgs.target_pose.pose.position.x = position_x;// - robotPose.getOrigin().getX(); //goals[0].pose.position.x;
-		goal_msgs.target_pose.pose.position.y = position_y;// - robotPose.getOrigin().getY();
+		goal_msgs.target_pose.pose.position.x = position_x;// - robotPose.pose.position.x; //goals[0].pose.position.x;
+		goal_msgs.target_pose.pose.position.y = position_y;// - robotPose.pose.position.y;
 		goal_msgs.target_pose.pose.position.z = 0;
 		goal_msgs.target_pose.pose.orientation.x = 0; //sin(angle/2); // goals[0].pose.orientation.x;
 		goal_msgs.target_pose.pose.orientation.y = 0;
@@ -1478,8 +1478,8 @@ public:
 			if (ac.getState() == actionlib::SimpleClientGoalState::ABORTED) {
 				ROS_INFO("ABORTED");
                                 
-                                exploration->next_auction_position_x = robotPose.getOrigin().getX();
-                                exploration->next_auction_position_y = robotPose.getOrigin().getY();
+                                exploration->next_auction_position_x = robotPose.pose.position.x;
+                                exploration->next_auction_position_y = robotPose.pose.position.y;
 				return false;
 			}
 			/*
@@ -1498,8 +1498,8 @@ public:
 		}
                 ROS_INFO("TARGET REACHED");
                 
-                exploration->next_auction_position_x = robotPose.getOrigin().getX();
-                exploration->next_auction_position_y = robotPose.getOrigin().getY();
+                exploration->next_auction_position_x = robotPose.pose.position.x;
+                exploration->next_auction_position_y = robotPose.pose.position.y;
 		return true;
 	}
 
@@ -1522,8 +1522,8 @@ public:
 		goal_msgs.target_pose.header.stamp = ros::Time::now();
 
                 goal_msgs.target_pose.header.frame_id = move_base_frame;//"map";
-		goal_msgs.target_pose.pose.position.x = robotPose.getOrigin().getX();
-		goal_msgs.target_pose.pose.position.y = robotPose.getOrigin().getY();
+		goal_msgs.target_pose.pose.position.x = robotPose.pose.position.x;
+		goal_msgs.target_pose.pose.position.y = robotPose.pose.position.y;
 		goal_msgs.target_pose.pose.position.z = 0;
 		goal_msgs.target_pose.pose.orientation.x = 0; //sin(angle/2); // goals[0].pose.orientation.x;
 		goal_msgs.target_pose.pose.orientation.y = 0;
@@ -1640,7 +1640,8 @@ private:
 	geometry_msgs::PointStamped homePoint;
 
 	std::vector<geometry_msgs::PoseStamped> goals;
-	tf::Stamped<tf::Pose> robotPose;
+	//tf::Stamped<tf::Pose> robotPose;
+    geometry_msgs::PoseStamped robotPose;
 
 	explorationPlanner::ExplorationPlanner *exploration;       
         
@@ -1661,8 +1662,12 @@ int main(int argc, char **argv) {
 	/*
 	 * Create instance of Simple Navigation
 	 */
-	tf::TransformListener tf(ros::Duration(10));
-	Explorer simple(tf);
+	// tf::TransformListener tf(ros::Duration(10));
+
+    tf2_ros::Buffer tfBuffer;
+    tf2_ros::TransformListener tfListener(tfBuffer);
+
+	Explorer simple(tfBuffer);
 
 	/*
 	 * The ros::spin command is needed to wait for any call-back. This could for

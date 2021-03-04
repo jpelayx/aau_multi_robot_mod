@@ -862,12 +862,12 @@ bool ExplorationPlanner::check_trajectory_plan()
     startPointSimulated.header.seq = start_point_simulated_message++;	// increase the sequence number
     startPointSimulated.header.stamp = ros::Time::now();
     startPointSimulated.header.frame_id = move_base_frame;
-    startPointSimulated.pose.position.x = robotPose.getOrigin().getX();
-    startPointSimulated.pose.position.y = robotPose.getOrigin().getY();
+    startPointSimulated.pose.position.x = robotPose.pose.position.x; //robotPose..getOrigin().getX();
+    startPointSimulated.pose.position.y = robotPose.pose.position.y; //robotPose..getOrigin().getY();
     startPointSimulated.pose.position.z = 0;
-    startPointSimulated.pose.orientation.x = robotPose.getRotation().getX();
-    startPointSimulated.pose.orientation.y = robotPose.getRotation().getY();
-    startPointSimulated.pose.orientation.z = robotPose.getRotation().getZ();
+    startPointSimulated.pose.orientation.x = robotPose.pose.orientation.x; //robotPose..getRotation().getX();
+    startPointSimulated.pose.orientation.y = robotPose.pose.orientation.y; //robotPose..getRotation().getY();
+    startPointSimulated.pose.orientation.z = robotPose.pose.orientation.z; //robotPose..getRotation().getZ();
     startPointSimulated.pose.orientation.w = 1;
 
     for(int i = 0; i<10; i++)
@@ -932,8 +932,8 @@ int ExplorationPlanner::calculate_travel_path(double x, double y)
     startPointSimulated.header.seq = start_point_simulated_message++;	// increase the sequence number
     startPointSimulated.header.stamp = ros::Time::now();
     startPointSimulated.header.frame_id = move_base_frame;
-    startPointSimulated.pose.position.x = robotPose.getOrigin().getX();
-    startPointSimulated.pose.position.y = robotPose.getOrigin().getY();
+    startPointSimulated.pose.position.x = robotPose.pose.position.x;
+    startPointSimulated.pose.position.y = robotPose.pose.position.y;
     startPointSimulated.pose.position.z = 0;
     startPointSimulated.pose.orientation.x = 0;
     startPointSimulated.pose.orientation.y = 0;
@@ -995,8 +995,8 @@ int ExplorationPlanner::check_trajectory_plan(double x, double y)
     startPointSimulated.header.seq = start_point_simulated_message++;	// increase the sequence number
     startPointSimulated.header.stamp = ros::Time::now();
     startPointSimulated.header.frame_id = move_base_frame;
-    startPointSimulated.pose.position.x = robotPose.getOrigin().getX();
-    startPointSimulated.pose.position.y = robotPose.getOrigin().getY();
+    startPointSimulated.pose.position.x = robotPose.pose.position.x;
+    startPointSimulated.pose.position.y = robotPose.pose.position.y;
     startPointSimulated.pose.position.z = 0;
     startPointSimulated.pose.orientation.x = 0;
     startPointSimulated.pose.orientation.y = 0;
@@ -1821,22 +1821,22 @@ int ExplorationPlanner::calculateAuctionBID(int cluster_number, std::string stra
         if(strategy == "trajectory")
         {
                distance = check_trajectory_plan(clusters.at(cluster_vector_position).cluster_element.at(i).x_coordinate, clusters.at(cluster_vector_position).cluster_element.at(i).y_coordinate);
-//               distance = estimate_trajectory_plan(robotPose.getOrigin().getX(), robotPose.getOrigin().getY(), clusters.at(cluster_vector_position).cluster_element.at(i).x_coordinate, clusters.at(cluster_vector_position).cluster_element.at(i).y_coordinate);
+//               distance = estimate_trajectory_plan(robotPose.pose.position.x, robotPose.pose.position.y, clusters.at(cluster_vector_position).cluster_element.at(i).x_coordinate, clusters.at(cluster_vector_position).cluster_element.at(i).y_coordinate);
       
 //               ROS_INFO("Distance for cluster %d: %d",clusters.at(cluster_vector_position).id, distance);
        
         }else if(strategy == "euclidean")
         {
-            double x = clusters.at(cluster_vector_position).cluster_element.at(i).x_coordinate - robotPose.getOrigin().getX();
-            double y = clusters.at(cluster_vector_position).cluster_element.at(i).y_coordinate - robotPose.getOrigin().getY();        
+            double x = clusters.at(cluster_vector_position).cluster_element.at(i).x_coordinate - robotPose.pose.position.x;
+            double y = clusters.at(cluster_vector_position).cluster_element.at(i).y_coordinate - robotPose.pose.position.y;        
             distance = x * x + y * y;
             return distance; 
         }
                
         if(distance > 0)
         {
-            double x = clusters.at(cluster_vector_position).cluster_element.at(i).x_coordinate - robotPose.getOrigin().getX();
-            double y = clusters.at(cluster_vector_position).cluster_element.at(i).y_coordinate - robotPose.getOrigin().getY();        
+            double x = clusters.at(cluster_vector_position).cluster_element.at(i).x_coordinate - robotPose.pose.position.x;
+            double y = clusters.at(cluster_vector_position).cluster_element.at(i).y_coordinate - robotPose.pose.position.y;        
             double euclidean_distance = x * x + y * y;
            
             /*
@@ -4153,7 +4153,7 @@ bool ExplorationPlanner::determine_goal(int strategy, std::vector<double> *final
                              * negative either, multiply the coordinate with 0.95 to get 95% of its
                              * original value.
                              */
-                            final_goal->push_back(frontiers.at(i).x_coordinate); //final_goal.push_back(frontiers.at(i).x_coordinate*0.95 - robotPose.getOrigin().getX());
+                            final_goal->push_back(frontiers.at(i).x_coordinate); //final_goal.push_back(frontiers.at(i).x_coordinate*0.95 - robotPose.pose.position.x);
                             final_goal->push_back(frontiers.at(i).y_coordinate);
                             final_goal->push_back(frontiers.at(i).detected_by_robot);
                             final_goal->push_back(frontiers.at(i).id);
@@ -4474,7 +4474,8 @@ void ExplorationPlanner::sort(int strategy)
          */
         if(strategy == 1)
         {
-            tf::Stamped < tf::Pose > robotPose;
+            //tf::Stamped < tf::Pose > robotPose;
+            geometry_msgs::PoseStamped robotPose;
             if (!costmap_ros_->getRobotPose(robotPose))
             {
                     ROS_ERROR("Failed to get RobotPose");
@@ -4484,10 +4485,10 @@ void ExplorationPlanner::sort(int strategy)
             {
                     for (int i = frontiers.size(); i >= 0; i--) {
                             for (int j = 0; j < frontiers.size() - 1; j++) {
-                                    double x = frontiers.at(j).x_coordinate - robotPose.getOrigin().getX();
-                                    double y = frontiers.at(j).y_coordinate - robotPose.getOrigin().getY();
-                                    double x_next = frontiers.at(j+1).x_coordinate - robotPose.getOrigin().getX();
-                                    double y_next = frontiers.at(j+1).y_coordinate - robotPose.getOrigin().getY();
+                                    double x = frontiers.at(j).x_coordinate - robotPose.pose.position.x;
+                                    double y = frontiers.at(j).y_coordinate - robotPose.pose.position.y;
+                                    double x_next = frontiers.at(j+1).x_coordinate - robotPose.pose.position.x;
+                                    double y_next = frontiers.at(j+1).y_coordinate - robotPose.pose.position.y;
                                     double euclidean_distance = x * x + y * y;
                                     double euclidean_distance_next = x_next * x_next + y_next * y_next;
 
@@ -4505,7 +4506,8 @@ void ExplorationPlanner::sort(int strategy)
         }
         else if(strategy == 2)
         {
-            tf::Stamped < tf::Pose > robotPose;
+            //tf::Stamped < tf::Pose > robotPose;
+            geometry_msgs::PoseStamped robotPose;
             if (!costmap_ros_->getRobotPose(robotPose))
             {
                     ROS_ERROR("Failed to get RobotPose");
@@ -4516,10 +4518,10 @@ void ExplorationPlanner::sort(int strategy)
                     for (int i = frontiers.size(); i >= 0; i--) 
                     {
                             for (int j = 0; j < frontiers.size() - 1; j++) {
-                                    double x = frontiers.at(j).x_coordinate - robotPose.getOrigin().getX();
-                                    double y = frontiers.at(j).y_coordinate - robotPose.getOrigin().getY();
-                                    double x_next = frontiers.at(j+1).x_coordinate - robotPose.getOrigin().getX();
-                                    double y_next = frontiers.at(j+1).y_coordinate - robotPose.getOrigin().getY();
+                                    double x = frontiers.at(j).x_coordinate - robotPose.pose.position.x;
+                                    double y = frontiers.at(j).y_coordinate - robotPose.pose.position.y;
+                                    double x_next = frontiers.at(j+1).x_coordinate - robotPose.pose.position.x;
+                                    double y_next = frontiers.at(j+1).y_coordinate - robotPose.pose.position.y;
                                     double euclidean_distance = x * x + y * y;
                                     double euclidean_distance_next = x_next * x_next + y_next * y_next;
 
@@ -4537,7 +4539,8 @@ void ExplorationPlanner::sort(int strategy)
         }
         else if(strategy == 3)
         {
-            tf::Stamped < tf::Pose > robotPose;
+            //tf::Stamped < tf::Pose > robotPose;
+            geometry_msgs::PoseStamped robotPose;
             if (!costmap_ros_->getRobotPose(robotPose))
             {
                     ROS_ERROR("Failed to get RobotPose");
@@ -4585,13 +4588,14 @@ void ExplorationPlanner::sort(int strategy)
         else if(strategy == 4)
         {
             ROS_INFO("sort(4)");
-            tf::Stamped < tf::Pose > robotPose;
+            //tf::Stamped < tf::Pose > robotPose;
+            geometry_msgs::PoseStamped robotPose;
             if (!costmap_ros_->getRobotPose(robotPose))
             {
                     ROS_ERROR("Failed to get RobotPose");
             }
-            double pose_x = robotPose.getOrigin().getX();
-            double pose_y = robotPose.getOrigin().getY();
+            double pose_x = robotPose.pose.position.x;
+            double pose_y = robotPose.pose.position.y;
             if(clusters.size() > 0)
             {
                 for(int cluster_number = 0; cluster_number < clusters.size(); cluster_number++)
@@ -4637,13 +4641,14 @@ void ExplorationPlanner::sort(int strategy)
         else if(strategy == 5)
         {
             ROS_INFO("sort(5)");
-            tf::Stamped < tf::Pose > robotPose;
+            //tf::Stamped < tf::Pose > robotPose;
+            geometry_msgs::PoseStamped robotPose;
             if (!costmap_ros_->getRobotPose(robotPose))
             {
                     ROS_ERROR("Failed to get RobotPose");
             }
-            double pose_x = robotPose.getOrigin().getX();
-            double pose_y = robotPose.getOrigin().getY();
+            double pose_x = robotPose.pose.position.x;
+            double pose_y = robotPose.pose.position.y;
             
             ROS_DEBUG("Iterating over all cluster elements");
             
@@ -4732,13 +4737,14 @@ void ExplorationPlanner::sort(int strategy)
         else if(strategy == 6)
         {
             ROS_INFO("sort(6)");
-            tf::Stamped < tf::Pose > robotPose;
+            //tf::Stamped < tf::Pose > robotPose;
+            geometry_msgs::PoseStamped robotPose;
             if (!costmap_ros_->getRobotPose(robotPose))
             {
                     ROS_ERROR("Failed to get RobotPose");
             }
-            double pose_x = robotPose.getOrigin().getX();
-            double pose_y = robotPose.getOrigin().getY();
+            double pose_x = robotPose.pose.position.x;
+            double pose_y = robotPose.pose.position.y;
             
             ROS_DEBUG("Iterating over all cluster elements");
             
@@ -4777,7 +4783,8 @@ void ExplorationPlanner::simulate() {
 	geometry_msgs::PointStamped goalPoint;
 	
 
-	tf::Stamped < tf::Pose > robotPose;
+    //tf::Stamped < tf::Pose > robotPose;
+    geometry_msgs::PoseStamped robotPose;
 	if (!costmap_ros_->getRobotPose(robotPose))
 	{
 		ROS_ERROR("Failed to get RobotPose");
@@ -5543,20 +5550,22 @@ int ExplorationPlanner::backoff (int point)
 
 bool ExplorationPlanner::isFrontierReached(int point) {
 
-	tf::Stamped < tf::Pose > robotPose;
+	//tf::Stamped < tf::Pose > robotPose;
+    geometry_msgs::PoseStamped robotPose;
+
 	if (!costmap_ros_->getRobotPose(robotPose)) {
 		ROS_WARN("[isFrontierReached]: Failed to get RobotPose");
 	}
-	geometry_msgs::PoseStamped robotPoseMsg;
-	tf::poseStampedTFToMsg(robotPose, robotPoseMsg);
+//	geometry_msgs::PoseStamped robotPoseMsg;
+//	tf::poseStampedTFToMsg(robotPose, robotPoseMsg);
 
 	unsigned int fx, fy;
 	double wfx, wfy;
 	costmap_.indexToCells(point, fx, fy);
 	costmap_.mapToWorld(fx, fy, wfx, wfy);
 
-	double dx = robotPoseMsg.pose.position.x - wfx;
-	double dy = robotPoseMsg.pose.position.y - wfy;
+	double dx = robotPose.pose.position.x - wfx;
+	double dy = robotPose.pose.position.y - wfy;
 
 	if ((dx * dx) + (dy * dy)
 			< (p_dist_for_goal_reached_ * p_dist_for_goal_reached_)) {

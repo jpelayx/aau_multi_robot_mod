@@ -18,6 +18,9 @@
 #include <map_merger/TransformPoint.h>
 //#include <dynamic_reconfigure/server.h>
 
+#include <tf/transform_listener.h>
+
+
 namespace explorationPlanner
 {
 	class ExplorationPlanner
@@ -149,7 +152,8 @@ namespace explorationPlanner
             
             tf::TransformListener listener;
             tf::StampedTransform transform;
-            tf::Stamped < tf::Pose > robotPose;
+            //tf::Stamped < tf::Pose > robotPose;
+            geometry_msgs::PoseStamped robotPose;
 
             map_merger::TransformPoint service_message;
 
