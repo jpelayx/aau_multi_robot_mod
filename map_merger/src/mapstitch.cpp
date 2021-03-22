@@ -136,30 +136,30 @@ StitchedMap::StitchedMap(Mat &img1, Mat &img2, int max_trans, int max_rotation, 
       works = false;
       return;
   }
-  if(scalex < 1 - scale_change|| scaley < 1 - scale_change)
-  {
-      ROS_WARN("Map should not scale change is to small %f, %f", scalex, scaley);
-      works = false;
-      return;
-  }
-  if(max_trans != -1)
-  {
-      if(transx > max_trans || transy > max_trans)
-      {
-          ROS_WARN("Map should not trans so strong");
-          works = false;
-          return;
-      }
-  }
-  if(max_rotation != -1)
-  {
-      if(rotation > max_rotation || rotation < -1 * max_rotation)
-      {
-          ROS_WARN("Map should not rotate so strong");
-          works = false;
-          return;
-      }
-  }
+//   if(scalex < 1 - scale_change|| scaley < 1 - scale_change)
+//   {
+//       ROS_WARN("Map should not scale change is to small %f, %f", scalex, scaley);
+//       works = false;
+//       return;
+//   }
+//   if(max_trans != -1)
+//   {
+//       if(transx > max_trans || transy > max_trans)
+//       {
+//           ROS_WARN("Map should not trans so strong");
+//           works = false;
+//           return;
+//       }
+//   }
+//   if(max_rotation != -1)
+//   {
+//       if(rotation > max_rotation || rotation < -1 * max_rotation)
+//       {
+//           ROS_WARN("Map should not rotate so strong");
+//           works = false;
+//           return;
+//       }
+//   }
   cur_trans = H;
   ROS_DEBUG("Finished estimateRigid");
   //evaluade transformation

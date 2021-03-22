@@ -1,7 +1,7 @@
 
 <launch>
 
-<arg name="robot_macs" default="robot_0,00:11:00:00:00:00!robot_1,11:00:00:00:00:00!robot_2,22:00:00:00:00:00!robot_3,33:00:00:00:00:00!robot_4,44:00:00:00:00:00!" />
+<arg name="robot_macs" default="robot_0,00:11:00:00:00:00!robot_1,11:00:00:00:00:00!robot_2,22:00:00:00:00:00!" />
 <arg name="log_path" default="$(env HOME)/logs" />
 <arg name="robot_local_map_frame" default="map" />
 
@@ -21,7 +21,7 @@
 	<param name="beacon_interval" value="100" />
 	<param name="enable_cooperative_relaying" value="true" />
 	<param name="simulation_mode" value="true"/>
-	<param name="robots_in_simulation" value="5" />
+	<param name="robots_in_simulation" value="3" />
 	<param name="sim_robot_macs" value="$(arg robot_macs)" />
 	<param name="p_tx" value="1" />
 </node>
@@ -82,7 +82,7 @@ base_frame: /robot_0/base_link
 	<param name="beacon_interval" value="100" />
 	<param name="enable_cooperative_relaying" value="true" />
 	<param name="simulation_mode" value="true"/>
-	<param name="robots_in_simulation" value="5" />
+	<param name="robots_in_simulation" value="3" />
 	<param name="sim_robot_macs" value="$(arg robot_macs)" />
 	<param name="p_tx" value="1" />
 </node>
@@ -143,7 +143,7 @@ base_frame: /robot_1/base_link
 	<param name="beacon_interval" value="100" />
 	<param name="enable_cooperative_relaying" value="true" />
 	<param name="simulation_mode" value="true"/>
-	<param name="robots_in_simulation" value="5" />
+	<param name="robots_in_simulation" value="3" />
 	<param name="sim_robot_macs" value="$(arg robot_macs)" />
 	<param name="p_tx" value="1" />
 </node>
